@@ -25,9 +25,9 @@ class BitLinear(nn.Module):
         out_features: int,
         initializer_weight: Callable[[torch.Tensor], torch.Tensor] = None,
         eps: float = 1.0e-5,
-        quant_base: int = 1,
+        quant_base: int = 8,
         pre_act: bool = False,
-        input_norm: bool = False,
+        input_norm: bool = True,
     ) -> None:
         """
         Instantiates a `BitLinear` layer.
