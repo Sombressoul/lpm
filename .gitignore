@@ -1,0 +1,11 @@
+__pycache__
+/PAC.NFO
+/.venv
+/.activate
+/temp
+/data
+/models
+/build
+/dist
+/*.egg-info
+/test_*.py

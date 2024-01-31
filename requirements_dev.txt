@@ -1,0 +1,4 @@
+matplotlib==3.8.2
+pillow==10.2.0
+torchvision==0.17.0
+madgrad==1.3
