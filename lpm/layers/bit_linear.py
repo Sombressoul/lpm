@@ -14,7 +14,7 @@ class BitLinear(nn.Module):
 
     The BitLinear class implements a 1-bit linear layer, inspired by the BitNet
     approach, designed for quantized neural networks. It features customizable
-    initializers, optional bias, and precision control through quantization base.
+    initializers, and precision control through quantization base.
     The pre_act flag adjusts quantization for layers followed by activations,
     while input_norm enables input normalization.
     """
@@ -23,9 +23,7 @@ class BitLinear(nn.Module):
         self,
         in_features: int,
         out_features: int,
-        bias: bool = True,
         initializer_weight: Callable[[torch.Tensor], torch.Tensor] = None,
-        initializer_bias: Callable[[torch.Tensor], torch.Tensor] = None,
         eps: float = 1.0e-5,
         quant_base: int = 1,
         pre_act: bool = False,
@@ -40,12 +38,8 @@ class BitLinear(nn.Module):
             Input size per sample.
         out_features : int
             Output size per sample.
-        bias : bool, optional
-            If `False`, no bias is added. Default: `True`.
         initializer_weight : Callable[[torch.Tensor], torch.Tensor], optional
             Function for custom weight initialization. If `None`, default are used.
-        initializer_bias: Callable[[torch.Tensor], torch.Tensor], optional
-            Function for custom bias initialization. If `None`, default are used.
         eps : float, optional
             Small value to prevent division by zero in normalization. Default: 1.0e-5.
         quant_base : int, optional
@@ -67,8 +61,8 @@ class BitLinear(nn.Module):
         function, such as ReLU.
 
         - Disabled by default, since observed performance degradation (probably
-        due to used weights/bias initialization, or used architecture of test
-        network, or because of my crooked hands).
+        due to used weights, or used architecture of test network, or because 
+        of my crooked hands).
 
         The `input_norm` parameter is used to apply normalization to he input.
         This is useful when the input is expected to have a larger range of values,
@@ -76,8 +70,8 @@ class BitLinear(nn.Module):
         but if `input_norm` is set to `True`, the input is normalized.
 
         - Disabled by default, since observed performance degradation (probably
-        due to used weights/bias initialization, or used architecture of test
-        network, or because of my crooked hands).
+        due to used weights, or used architecture of test network, or because 
+        of my crooked hands).
         - Besides, intermediate normalization is the task of the architecture
         designer, not of a specific module.
 
@@ -105,18 +99,6 @@ class BitLinear(nn.Module):
         )
         self.weight = nn.Parameter(w)
 
-        # Init bias.
-        if bias:
-            b = torch.empty(out_features)
-            b = (
-                BitLinear._default_initializer_bias(b)
-                if initializer_bias is None
-                else initializer_bias(b)
-            )
-            self.bias = nn.Parameter(b)
-        else:
-            self.register_parameter("bias", None)
-
         pass
 
     @staticmethod
@@ -126,19 +108,10 @@ class BitLinear(nn.Module):
         # He et al. (2015): arXiv:1502.01852
         fan = torch.nn.init._calculate_correct_fan(tensor, mode="fan_in")
         # I've used sqrt(3.0) instead of sqrt(2.0) below, since it leads
-        # to a better preservation of input magnitudes. (K.B.)
+        # to a better preservation of input magnitudes.
         bound = math.sqrt(3.0 / fan)
         with torch.no_grad():
             return tensor.uniform_(-bound, bound)
-
-    @staticmethod
-    def _default_initializer_bias(
-        tensor: torch.Tensor,
-    ) -> torch.Tensor:
-        # Why? To reduce the number of dead units at the beginning
-        # in case of ReLU input. (K.B.)
-        with torch.no_grad():
-            return tensor.normal_(mean=1.0e-2, std=1.0e-3)
 
     def forward(
         self,
@@ -174,8 +147,7 @@ class BitLinear(nn.Module):
         beta = torch.max(torch.abs(self.weight))
         scale = (beta * gamma) / Qb
 
-        # Multiply quantized x and W and scale the result back and add bias.
-        bias = self.bias if self.bias is not None else torch.zeros_like(scale)
-        x = (x_q @ w_q) * scale + bias
+        # Multiply quantized x and W and scale the result back.
+        x = (x_q @ w_q) * scale
 
         return x

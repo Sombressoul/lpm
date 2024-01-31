@@ -21,7 +21,7 @@ from lpm.layers import BitLinear
 # Run:
 #   python eval/cifar100_conv2d_bitlinear.py --seed=1 --batch-size=64 --epochs=10 --lr=1.0e-3 --wd=1.0e-5
 # Result:
-#   Test set: Average loss: 3.1640, Accuracy: 2312/10000 (23%)
+#   Test set: Average loss: 3.1226, Accuracy: 2347/10000 (23%)
 class ExperimentalModel(nn.Module):
     def __init__(
         self,
@@ -40,7 +40,6 @@ class ExperimentalModel(nn.Module):
         self.fc2 = BitLinear(
             in_features=84,
             out_features=100,
-            bias=False,
         )
         self.log_softmax = nn.LogSoftmax(dim=1)
         pass
