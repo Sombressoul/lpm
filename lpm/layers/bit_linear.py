@@ -12,8 +12,8 @@ class BitLinear(nn.Module):
     """
     BitNet: Scaling 1-bit Transformers for Large Language Models, 2023 (arXiv:2310.11453)
 
-    The BitLinear class implements a 1-bit linear layer, inspired by the BitNet
-    approach, designed for quantized neural networks. It features customizable
+    The BitLinear class implements a 1-bit linear layer, introduced in the BitNet
+    paper, designed for quantized neural networks. It features customizable
     initializers, and precision control through quantization base.
     The pre_act flag adjusts quantization for layers followed by activations,
     while input_norm enables input normalization.
