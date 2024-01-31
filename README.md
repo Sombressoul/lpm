@@ -9,7 +9,8 @@ Some of the presented modules are implementations of specific scientific publica
 ## Modules
 
 1. __BitLinear__: An implementation of the "BitNet" paper ([arXiv:2310.11453](https://arxiv.org/pdf/2310.11453.pdf)).
-2. (WIP) __BitConv2D__: My extension of ideas from the "BitNet" paper, applied to two-dimensional convolutional layers.
+2. __BitLinearMod__: A modified version of the BitLinear layer from the "BitNet" paper.
+3. (WIP) __BitConv2D__: My extension of ideas from the "BitNet" paper, applied to two-dimensional convolutional layers.
 
 ## Contributing
 
