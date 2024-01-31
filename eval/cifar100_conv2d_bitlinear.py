@@ -14,6 +14,9 @@ sys.path.append(lpm_dir)
 
 from lpm.layers import BitLinear
 
+# Various params.
+model_name = "cifar100_conv2d_bitlinear"
+
 
 # Experimental model:
 #   Convolutions: torch.nn.Conv2d
@@ -21,7 +24,7 @@ from lpm.layers import BitLinear
 # Run:
 #   python eval/cifar100_conv2d_bitlinear.py --seed=1 --batch-size=64 --epochs=10 --lr=1.0e-3 --wd=1.0e-5
 # Result:
-#   Test set: Average loss: 3.1226, Accuracy: 2347/10000 (23%)
+#   Test set: Average loss: 3.1632, Accuracy: 2368/10000 (24%)
 class ExperimentalModel(nn.Module):
     def __init__(
         self,
@@ -227,7 +230,7 @@ def main():
         test(model, device, test_loader)
 
     if args.save_model:
-        torch.save(model.state_dict(), "model_cifar100.pt")
+        torch.save(model.state_dict(), f"model_{model_name}.pt")
 
 
 if __name__ == "__main__":

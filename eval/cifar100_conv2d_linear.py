@@ -12,6 +12,9 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 lpm_dir = os.path.dirname(script_dir)
 sys.path.append(lpm_dir)
 
+# Various params.
+model_name = "cifar100_conv2d_linear"
+
 
 # Experimental model:
 #   Convolutions: torch.nn.Conv2d
@@ -19,7 +22,7 @@ sys.path.append(lpm_dir)
 # Run:
 #   python eval/cifar100_conv2d_linear.py --seed=1 --batch-size=64 --epochs=10 --lr=1.0e-3 --wd=1.0e-5
 # Result:
-#   Test set: Average loss: 2.9505, Accuracy: 2893/10000 (29%)
+#   Test set: Average loss: 2.9508, Accuracy: 2914/10000 (29%)
 class ExperimentalModel(nn.Module):
     def __init__(
         self,
@@ -227,7 +230,7 @@ def main():
         test(model, device, test_loader)
 
     if args.save_model:
-        torch.save(model.state_dict(), "model_cifar100.pt")
+        torch.save(model.state_dict(), f"model_{model_name}.pt")
 
 
 if __name__ == "__main__":
