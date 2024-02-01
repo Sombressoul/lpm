@@ -106,9 +106,9 @@ class BitLinear(nn.Module):
         tensor: torch.Tensor,
     ) -> torch.Tensor:
         # He et al. (2015): arXiv:1502.01852
+        # I've used sqrt(3.0) instead of sqrt(2.0) below, as this seems to 
+        # lead to a better preservation of input magnitudes.
         fan = torch.nn.init._calculate_correct_fan(tensor, mode="fan_in")
-        # I've used sqrt(3.0) instead of sqrt(2.0) below, since it leads
-        # to a better preservation of input magnitudes.
         bound = math.sqrt(3.0 / fan)
         with torch.no_grad():
             return tensor.uniform_(-bound, bound)
