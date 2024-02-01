@@ -134,9 +134,6 @@ class BitLinearMod(nn.Module):
         self,
         device_type: str,
     ) -> torch.autocast:
-        # if hasattr(self, "autocast_ctx"):
-        #     return self.autocast_ctx
-
         if self.fp8_e4m3:
             try:
                 import transformer_engine as te
@@ -169,12 +166,9 @@ class BitLinearMod(nn.Module):
     ) -> torch.Tensor:
         # Cast x to params dtype.
         src_dtype = x.dtype
-        x = x.to(dtype=self.params_dtype)
+        x = x.to(dtype=self.params_dtype).contiguous()
 
         with self._get_ctx(device_type=x.device.type):
-            # Make sure input is contiguous.
-            x = x.contiguous()
-
             # Centralize and quantize weights.
             w = torch.sign(self.weight - self.weight.mean())
             w = self.weight + (w - self.weight).detach()  # STE
@@ -183,7 +177,7 @@ class BitLinearMod(nn.Module):
             gamma = torch.max(torch.abs(x), dim=1, keepdim=True).values
             x = x / (gamma + self.eps)
 
-            # Multiply quantized x and W, and scale the result back.
+            # Multiply quantized x and w, and scale the result back.
             scale = torch.max(torch.abs(self.weight)) * gamma
             x = x @ w
             x.mul_(scale)
