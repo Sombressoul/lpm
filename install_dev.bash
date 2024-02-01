@@ -58,5 +58,17 @@ python -m pip install -r requirements.txt
 # Install dev dependencies.
 python -m pip install -r requirements_dev.txt
 
+# Install deps from GIT.
+mkdir -p $PROJECT_DIR/repos/TransformerEngine
+cd $PROJECT_DIR/repos/TransformerEngine
+git clone --branch stable --recursive https://github.com/NVIDIA/TransformerEngine.git .
+git submodule update --init --recursive
+# Building TransformerEngine from source requires ninja and wheel to be installed.
+python -m pip install "ninja==1.11.1.1" "wheel==0.42.0"
+export NVTE_FRAMEWORK="pytorch"
+export MAX_JOBS=1
+python -m pip install --no-build-isolation .
+cd $PROJECT_DIR
+
 # Deactivate venv.
 deactivate
