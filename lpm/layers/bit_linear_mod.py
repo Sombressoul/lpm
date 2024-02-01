@@ -144,7 +144,7 @@ class BitLinearMod(nn.Module):
                     fp8_format=te.common.recipe.Format.E4M3,
                     amax_compute_algo="max",
                 )
-                self.autocast_ctx = te.pytorch.fp8_autocast(
+                autocast_ctx = te.pytorch.fp8_autocast(
                     enabled=True,
                     fp8_recipe=fp8_e4m3,
                 )
@@ -153,12 +153,12 @@ class BitLinearMod(nn.Module):
                     "fp8_e4m3 requires `transformer_engine` to be installed."
                 )
         else:
-            self.autocast_ctx = torch.autocast(
+            autocast_ctx = torch.autocast(
                 dtype=self.params_dtype,
                 device_type=device_type,
             )
 
-        return self.autocast_ctx
+        return autocast_ctx
 
     def forward(
         self,
