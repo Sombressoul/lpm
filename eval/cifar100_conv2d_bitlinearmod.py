@@ -24,7 +24,7 @@ model_name = "cifar100_conv2d_bitlinearmod"
 # Run:
 #   python eval/cifar100_conv2d_bitlinearmod.py --seed=1 --batch-size=64 --epochs=10 --lr=1.0e-3 --wd=1.0e-5
 # Result:
-#   Test set: Average loss: 3.1893, Accuracy: 2322/10000 (23%)
+#   Test set: Average loss: 3.1790, Accuracy: 2354/10000 (24%)
 class ExperimentalModel(nn.Module):
     def __init__(
         self,
@@ -39,10 +39,12 @@ class ExperimentalModel(nn.Module):
         self.fc1 = BitLinearMod(
             in_features=256,
             out_features=84,
+            fp8_e4m3=True,
         )
         self.fc2 = BitLinearMod(
             in_features=84,
             out_features=100,
+            fp8_e4m3=True,
         )
         self.log_softmax = nn.LogSoftmax(dim=1)
         pass
